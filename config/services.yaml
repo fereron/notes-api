@@ -1,0 +1,37 @@
+parameters:
+    app.notes_upload_directory: '%kernel.project_dir%/public/uploads/notes'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    handler.user:
+        class: App\Handler\UserHandler
+        tags:
+            - { name: tactician.handler, typehints: true }
+
+    handler.note:
+        class: App\Handler\NoteHandler
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@note.uploader'
+        tags:
+            - { name: tactician.handler, typehints: true }
+
+    note.uploader:
+        class: App\DependencyInjection\Uploader\NoteImageUploader
+        arguments:
+            $uploadDirectory: '%app.notes_upload_directory%'

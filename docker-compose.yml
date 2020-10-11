@@ -1,0 +1,61 @@
+version: '3.3'
+
+services:
+  nginx:
+    build:
+      context: ./docker/development
+      dockerfile: nginx.docker
+    volumes:
+      - ./:/app:delegated
+    ports:
+      - 8080:80
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: ./docker/development
+      dockerfile: php-fpm.docker
+    volumes:
+      - ./:/app:delegated
+    depends_on:
+      - postgres
+
+  php-cli:
+    build:
+      context: ./docker/development
+      dockerfile: php-cli.docker
+    volumes:
+      - ./:/app:delegated
+      - composer:/root/.composer/cache:delegated
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data:delegated
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: app
+    ports:
+      - "54321:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:4.18
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: test123
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8020:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin:delegated
+    links:
+      - "postgres:pgsql-server"
+
+volumes:
+  postgres:
+  composer:
+  pgadmin:
