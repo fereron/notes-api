@@ -60,6 +60,11 @@ class NoteHandler
             ->setBody($command->body)
             ->setUpdatedAt(new \DateTime);
 
+        if ($command->image) {
+            $image = new Note\Image($this->fileUploader->upload($command->image));
+            $note->setImage($image);
+        }
+
         $this->entityManager->persist($note);
         $this->entityManager->flush();
     }

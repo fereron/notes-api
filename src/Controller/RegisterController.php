@@ -41,9 +41,7 @@ class RegisterController extends ApiController
         $violations = $this->validator->validate($command);
 
         if ($violations->count() > 0) {
-            $json = $this->serializer->serialize($violations, 'json');
-
-            return $this->respondValidationError($json);
+            return $this->respondValidationErrors($violations);
         }
 
         $bus->handle($command);

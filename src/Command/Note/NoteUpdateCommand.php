@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command\Note;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class NoteUpdateCommand
@@ -21,19 +22,22 @@ class NoteUpdateCommand
     public $title;
 
     /**
-     * @var string
+     * @var string|null
      * @Assert\Type("string")
      */
     public $body;
 
     /**
+     * @var UploadedFile|null
      * @Assert\Image()
      */
     public $image;
 
-    public function __construct(int $id = null)
+    public function __construct(array $properties)
     {
-        $this->id = $id;
+        foreach ($properties as $property => $value) {
+            $this->$property = $value;
+        }
     }
 
 }

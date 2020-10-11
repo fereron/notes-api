@@ -2,26 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ApiController extends AbstractController
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
-    }
-
     /**
      * @var integer HTTP status code - 200 (OK) by default
      */
@@ -52,19 +38,6 @@ class ApiController extends AbstractController
     }
 
     /**
-     * Returns a JSON response
-     *
-     * @param array $data
-     * @param array $headers
-     *
-     * @return JsonResponse
-     */
-    public function response($data, $headers = [])
-    {
-        return new JsonResponse($data, $this->getStatusCode(), $headers);
-    }
-
-    /**
      * Sets an error message and returns a JSON response
      *
      * @param string $errors
@@ -80,7 +53,6 @@ class ApiController extends AbstractController
 
         return new JsonResponse($data, $this->getStatusCode(), $headers);
     }
-
 
     /**
      * Sets an error message and returns a JSON response
@@ -99,19 +71,6 @@ class ApiController extends AbstractController
         return new JsonResponse($data, $this->getStatusCode(), $headers);
     }
 
-
-    /**
-     * Returns a 401 Unauthorized http response
-     *
-     * @param string $message
-     *
-     * @return JsonResponse
-     */
-    public function respondUnauthorized($message = 'Not authorized!')
-    {
-        return $this->setStatusCode(401)->respondWithErrors($message);
-    }
-
     /**
      * Returns a 422 Unprocessable Entity
      *
@@ -120,50 +79,9 @@ class ApiController extends AbstractController
      */
     public function respondValidationErrors(ConstraintViolationListInterface $violations)
     {
-        $json = $this->serializer->serialize($violations, 'json');
+        $json = $this->container->get('serializer')->serialize($violations, 'json');
 
         return $this->setStatusCode(422)->respondWithErrors($json);
     }
-
-    /**
-     * Returns a 404 Not Found
-     *
-     * @param string $message
-     *
-     * @return JsonResponse
-     */
-    public function respondNotFound($message = 'Not found!')
-    {
-        return $this->setStatusCode(404)->respondWithErrors($message);
-    }
-
-    /**
-     * Returns a 201 Created
-     *
-     * @param array $data
-     *
-     * @return JsonResponse
-     */
-    public function respondCreated($data = [])
-    {
-        return $this->setStatusCode(201)->response($data);
-    }
-
-    // this method allows us to accept JSON payloads in POST requests
-    // since Symfony 4 doesn’t handle that automatically:
-
-    protected function transformJsonBody(\Symfony\Component\HttpFoundation\Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-
-        if ($data === null) {
-            return $request;
-        }
-
-        $request->request->replace($data);
-
-        return $request;
-    }
-
 
 }

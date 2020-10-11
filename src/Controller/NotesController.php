@@ -6,15 +6,14 @@ namespace App\Controller;
 use App\Command\Note\NoteCreateCommand;
 use App\Command\Note\NoteDeleteCommand;
 use App\Command\Note\NoteUpdateCommand;
+use App\Entity\Note;
 use App\Repository\NoteRepository;
 use App\Resource\NoteResource;
 use App\Security\NoteAccess;
 use League\Tactician\CommandBus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NotesController extends ApiController
@@ -34,17 +33,10 @@ class NotesController extends ApiController
      */
     private $validator;
 
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    public function __construct(NoteRepository $noteRepository, CommandBus $bus, ValidatorInterface $validator, SerializerInterface $serializer)
+    public function __construct(NoteRepository $noteRepository, CommandBus $bus, ValidatorInterface $validator)
     {
-        parent::__construct($serializer);
         $this->bus = $bus;
         $this->validator = $validator;
-        $this->serializer = $serializer;
         $this->noteRepository = $noteRepository;
     }
 
@@ -58,11 +50,10 @@ class NotesController extends ApiController
     {
         $data = array_replace($request->request->all(), [
             'author_id' => $this->getUser()->getId(),
-            'image' => $request->files->get('image')
+            'image'     => $request->files->get('image')
         ]);
 
         $command = new NoteCreateCommand($data);
-
         $violations = $this->validator->validate($command);
 
         if ($violations->count() > 0) {
@@ -75,26 +66,22 @@ class NotesController extends ApiController
     }
 
     /**
-     * @Route("/api/notes/{id}/update", name="notes.update", methods={"PUT"})
+     * @Route("/api/notes/{id}/update", name="notes.update", methods={"POST"})
      *
-     * @param int $id
+     * @param Note $note
      * @param Request $request
      * @return JsonResponse
      */
-    public function update(int $id, Request $request): JsonResponse
+    public function update(Note $note, Request $request): JsonResponse
     {
-        $note = $this->noteRepository->find($id);
-
-        if (!$note) {
-            return $this->respondNotFound();
-        }
-
         $this->denyAccessUnlessGranted(NoteAccess::MANAGE, $note);
 
-        $command = $this->serializer->deserialize($request->getContent(), NoteUpdateCommand::class, 'json', [
-            'object_to_populate' => new NoteUpdateCommand($id),
+        $data = array_replace($request->request->all(), [
+            'id' => $note->getId(),
+            'image' => $request->files->get('image')
         ]);
 
+        $command = new NoteUpdateCommand($data);
         $violations = $this->validator->validate($command);
 
         if ($violations->count() > 0) {
@@ -103,48 +90,34 @@ class NotesController extends ApiController
 
         $this->bus->handle($command);
 
-        return $this->respondWithSuccess("Note {$command->title} successfully updated");
+        return $this->respondWithSuccess("Note \"{$command->title}\" successfully updated");
     }
 
     /**
      * @Route("/api/notes/{id}/delete", name="notes.delete", methods={"DELETE"})
      *
-     * @param int $id
+     * @param Note $note
      * @return JsonResponse
      */
-    public function delete(int $id): JsonResponse
+    public function delete(Note $note): JsonResponse
     {
-        $note = $this->noteRepository->find($id);
-
-        if (!$note) {
-            return $this->respondNotFound();
-        }
-
         $this->denyAccessUnlessGranted(NoteAccess::MANAGE, $note);
 
-        $command = new NoteDeleteCommand($id);
-
+        $command = new NoteDeleteCommand($note->getId());
         $this->bus->handle($command);
 
         return $this->respondWithSuccess("Note successfully deleted");
     }
 
     /**
-     * @todo check Note by DI
      * @Route("/api/notes/{id}", name="notes.show", methods={"GET"})
      *
-     * @param int $id
+     * @param Note $note
      * @param NoteResource $resource
      * @return JsonResponse
      */
-    public function show(int $id, NoteResource $resource): JsonResponse
+    public function show(Note $note, NoteResource $resource): JsonResponse
     {
-        $note = $this->noteRepository->find($id);
-
-        if (!$note) {
-            throw new NotFoundHttpException();
-        }
-
         $this->denyAccessUnlessGranted(NoteAccess::MANAGE, $note);
 
         return $this->json([

@@ -28,7 +28,7 @@ class NoteCreateCommand
     public $title;
 
     /**
-     * @var string
+     * @var string|null
      * @Assert\Type("string")
      */
     public $body;

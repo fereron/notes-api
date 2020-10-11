@@ -23,7 +23,7 @@ class NoteResource extends Resource
 
     public function __construct(RequestStack $requestStack, ImageCacheManager $imageCacheManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->request           = $requestStack->getCurrentRequest();
         $this->imageCacheManager = $imageCacheManager;
     }
 
@@ -33,22 +33,32 @@ class NoteResource extends Resource
      */
     public function toArray($note): array
     {
-        $imageUrl = $note->getImage()
-            ? $this->request->getUriForPath('/' . $note->getImage()->getWebPath())
-            : null;
-
-        $imagePreview = $note->getImage()
-            ? $this->imageCacheManager->getBrowserPath($note->getImage()->getWebPath(), 'squared_thumbnail_small')
-            : null;
-
         return [
-            'id' => $note->getId(),
-            'title' => $note->getTitle(),
-            'body' => StringHelper::words($note->getBody(), 3),
-            'created_at' => $note->getCreatedAt()->format('Y-m-d H:i:s'),
-            'image' => $imageUrl,
-            'image_thumbnail' => $imagePreview
+            'id'              => $note->getId(),
+            'title'           => $note->getTitle(),
+            'body'            => StringHelper::words($note->getBody(), 10),
+            'created_at'      => $note->getCreatedAt()->format('Y-m-d H:i:s'),
+            'image'           => $this->generateImageUrl($note->getImage()),
+            'image_thumbnail' => $this->generateImageThumbnail($note->getImage())
         ];
+    }
+
+    private function generateImageUrl(Note\Image $image): ?string
+    {
+        if (!$image->getFilename()) {
+            return null;
+        }
+
+        return $this->request->getUriForPath('/' . $image->getWebPath());
+    }
+
+    private function generateImageThumbnail(Note\Image $image): ?string
+    {
+        if (!$image->getFilename()) {
+            return null;
+        }
+
+        return $this->imageCacheManager->getBrowserPath($image->getWebPath(), 'squared_thumbnail_small');
     }
 
 }

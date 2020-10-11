@@ -22,14 +22,14 @@ class Image
         $this->image = $image;
     }
 
-    public function getFilename(): string
+    public function getFilename(): ?string
     {
         return $this->image;
     }
 
-    public function getWebPath(): string
+    public function getWebPath(): ?string
     {
-        return self::DIRECTORY . $this->image;
+        return $this->image ? self::DIRECTORY . $this->image : null;
     }
 
 }
