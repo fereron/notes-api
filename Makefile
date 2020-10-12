@@ -15,13 +15,16 @@ docker-pull:
 docker-build:
 	docker-compose build
 
-app-init: app-install-composer app-migrate
+app-init: app-install-composer app-migrate app-seed
 
 app-install-composer:
 	docker-compose run --rm php-cli composer install
 
 app-migrate:
 	docker-compose run --rm php-cli php bin/console doctrine:migrations:migrate --quiet
+
+app-seed:
+	docker-compose run --rm php-cli php bin/console doctrine:fixtures:load --quiet
 
 app-test:
 	docker-compose run --rm php-cli ./bin/phpunit

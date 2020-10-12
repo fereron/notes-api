@@ -19,10 +19,7 @@ liip/imagine-bundle: This bundle provides an image manipulation abstraction tool
 Installation
 ============
 
-Make sure Docker is installed globally
-
-Applications that use Symfony Flex
-----------------------------------
+Make sure Docker is installed globally.
 
 Open a command console, enter your project directory and execute:
 
@@ -30,7 +27,23 @@ Open a command console, enter your project directory and execute:
 $ make init
 ```
 
-You can login to api with username 'test@mail.com' and password '123456'
+#####Generate the SSH keys:
+```console
+$ mkdir -p config/jwt
+$ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+$ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+```
+
+And write secret key to JWT_PASSPHRASE in .env file
+
+Now you can login to api sending post request to "http://localhost:8080/api/login_check" with credentials:
+
+```json
+{
+  "username": "test@test.com",
+  "password": "123456"
+}
+```
 
 ### Link to deployed app
 
