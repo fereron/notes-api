@@ -66,7 +66,7 @@ class NotesControllerTest extends WebTestCase
         $this->assertSame('application/json', $response->headers->get('Content-Type'));
 
         $this->client->request(
-            'GET', '/api/notes/2', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'GET', '/api/notes/4', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -98,7 +98,7 @@ class NotesControllerTest extends WebTestCase
         $this->assertSame('application/json', $response->headers->get('Content-Type'));
 
         $this->client->request(
-            'GET', '/api/notes/3', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'GET', '/api/notes/5', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -122,7 +122,7 @@ class NotesControllerTest extends WebTestCase
         ];
 
         $this->client->request(
-            'POST', '/api/notes/3/update', $params, [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'POST', '/api/notes/5/update', $params, [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
 
         $response = $this->client->getResponse();
@@ -131,7 +131,7 @@ class NotesControllerTest extends WebTestCase
         $this->assertSame('application/json', $response->headers->get('Content-Type'));
 
         $this->client->request(
-            'GET', '/api/notes/3', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'GET', '/api/notes/5', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -149,7 +149,7 @@ class NotesControllerTest extends WebTestCase
         $token = $this->createUser();
 
         $this->client->request(
-            'DELETE', '/api/notes/3/delete', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'DELETE', '/api/notes/5/delete', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
         $response = $this->client->getResponse();
 
@@ -157,7 +157,7 @@ class NotesControllerTest extends WebTestCase
         $this->assertJson($response->getContent());
 
         $this->client->request(
-            'GET', '/api/notes/3', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
+            'GET', '/api/notes/5', [], [], ['HTTP_AUTHORIZATION' => 'Bearer '. $token]
         );
 
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
