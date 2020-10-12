@@ -11,15 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class NoteResource extends Resource
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var ImageCacheManager
-     */
-    private $imageCacheManager;
+    private ?Request $request;
+    private ImageCacheManager $imageCacheManager;
 
     public function __construct(RequestStack $requestStack, ImageCacheManager $imageCacheManager)
     {
@@ -36,7 +29,7 @@ class NoteResource extends Resource
         return [
             'id'              => $note->getId(),
             'title'           => $note->getTitle(),
-            'body'            => StringHelper::words($note->getBody(), 10),
+            'body'            => $note->getBody() ? StringHelper::words($note->getBody(), 10) : null,
             'created_at'      => $note->getCreatedAt()->format('Y-m-d H:i:s'),
             'image'           => $this->generateImageUrl($note->getImage()),
             'image_thumbnail' => $this->generateImageThumbnail($note->getImage())

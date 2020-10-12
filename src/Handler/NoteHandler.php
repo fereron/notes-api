@@ -13,15 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class NoteHandler
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var FileUploaderInterface
-     */
-    private $fileUploader;
+    private EntityManagerInterface $entityManager;
+    private FileUploaderInterface $fileUploader;
 
     public function __construct(EntityManagerInterface $entityManager, FileUploaderInterface $fileUploader)
     {

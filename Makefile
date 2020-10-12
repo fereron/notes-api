@@ -21,4 +21,7 @@ app-install-composer:
 	docker-compose run --rm php-cli composer install
 
 app-migrate:
-	docker-compose run --rm php-cli php bin/console doctrine:migrations:migrate
+	docker-compose run --rm php-cli php bin/console doctrine:migrations:migrate --quiet
+
+app-test:
+	docker-compose run --rm php-cli ./bin/phpunit

@@ -11,7 +11,7 @@ class ApiController extends AbstractController
     /**
      * @var integer HTTP status code - 200 (OK) by default
      */
-    protected $statusCode = 200;
+    protected int $statusCode = 200;
 
     /**
      * Gets the value of statusCode.
@@ -69,6 +69,19 @@ class ApiController extends AbstractController
         ];
 
         return new JsonResponse($data, $this->getStatusCode(), $headers);
+    }
+
+    /**
+     * Returns a 201 Created
+     *
+     * @param $success
+     * @return JsonResponse
+     */
+    public function respondCreated($success)
+    {
+        $this->setStatusCode(201);
+
+        return $this->respondWithSuccess($success);
     }
 
     /**

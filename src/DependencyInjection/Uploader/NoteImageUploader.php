@@ -9,15 +9,8 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class NoteImageUploader implements FileUploaderInterface
 {
-    /**
-     * @var string
-     */
-    private $uploadDirectory;
-
-    /**
-     * @var SluggerInterface
-     */
-    private $slugger;
+    private string $uploadDirectory;
+    private SluggerInterface $slugger;
 
     public function __construct(string $uploadDirectory, SluggerInterface $slugger)
     {

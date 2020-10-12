@@ -18,20 +18,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NotesController extends ApiController
 {
-    /**
-     * @var NoteRepository
-     */
-    private $noteRepository;
-
-    /**
-     * @var CommandBus
-     */
-    private $bus;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private NoteRepository $noteRepository;
+    private CommandBus $bus;
+    private ValidatorInterface $validator;
 
     public function __construct(NoteRepository $noteRepository, CommandBus $bus, ValidatorInterface $validator)
     {
@@ -62,7 +51,7 @@ class NotesController extends ApiController
 
         $this->bus->handle($command);
 
-        return $this->respondWithSuccess('Note successfully created');
+        return $this->respondCreated('Note successfully created');
     }
 
     /**
