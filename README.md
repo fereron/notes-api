@@ -1,9 +1,25 @@
+Used technologies and libraries
+============
+
+PHP (Symfony 5.1), Docker
+
+league/tactician-bundle: Tactician is a command bus library. 
+
+The term is mostly used when we combine the Command pattern with a service layer. Its job is to take a Command object (which describes what the user wants to do) and match it to a Handler (which executes it).
+
+----------------------------------
+
+lexik/jwt-authentication-bundle: This bundle provides JWT (Json Web Token) authentication for your Symfony API.
+
+----------------------------------
+
+liip/imagine-bundle: This bundle provides an image manipulation abstraction toolkit
+
+
 Installation
 ============
 
-Make sure Composer is installed globally, as explained in the
-[installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
+Make sure Docker is installed globally
 
 Applications that use Symfony Flex
 ----------------------------------
@@ -11,31 +27,20 @@ Applications that use Symfony Flex
 Open a command console, enter your project directory and execute:
 
 ```console
-$ composer require <package-name>
+$ make init
 ```
 
-Applications that don't use Symfony Flex
-----------------------------------------
+You can login to api with username 'test@mail.com' and password '123456'
 
-### Step 1: Download the Bundle
+### Link to deployed app
 
-Open a command console, enter your project directory and execute the
-following command to download the latest stable version of this bundle:
+http://367514-cv87846.tmweb.ru
+
+### phpunit
+
+To run tests:
 
 ```console
-$ composer require <package-name>
+$ make app-test
 ```
 
-### Step 2: Enable the Bundle
-
-Then, enable the bundle by adding it to the list of registered bundles
-in the `config/bundles.php` file of your project:
-
-```php
-// config/bundles.php
-
-return [
-    // ...
-    <vendor>\<bundle-name>\<bundle-long-name>::class => ['all' => true],
-];
-```
